@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const config = require("config");
 const auth = require("./routes/auth");
 const register = require("./routes/register");
+const products = require("./routes/products");
 const app = express();
 
 if (!config.get("jwtPrivateKey")) {
@@ -18,6 +19,7 @@ mongoose
 app.use(express.json());
 app.use("/api/auth", auth);
 app.use("/api/register", register);
+app.use("/api/product", products);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
