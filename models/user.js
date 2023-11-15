@@ -59,6 +59,10 @@ userSchema.methods.isStore = function () {
   return this.user_role === "Store";
 };
 
+userSchema.methods.fullName = function () {
+  return `${this.first_name} ${this.last_name}`;
+};
+
 const User = mongoose.model("User", userSchema);
 
 function validateRegister(user) {

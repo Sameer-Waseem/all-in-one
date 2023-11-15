@@ -39,7 +39,10 @@ router.post("/", async (req, res) => {
     res
       .status(200)
       .header("x-auth-token", token)
-      .send("User created successfully.");
+      .send({
+        message: "User created successfully.",
+        user: { id: user._id, name: user.fullName() },
+      });
   } catch (error) {
     res.status(400).send(error);
   }

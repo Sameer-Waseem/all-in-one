@@ -4,6 +4,7 @@ const config = require("config");
 const auth = require("./routes/auth");
 const register = require("./routes/register");
 const products = require("./routes/products");
+const stores = require("./routes/stores");
 const app = express();
 
 if (!config.get("jwtPrivateKey")) {
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use("/api/auth", auth);
 app.use("/api/register", register);
 app.use("/api/product", products);
+app.use("/api/store", stores);
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Listening on port ${port}...`));
