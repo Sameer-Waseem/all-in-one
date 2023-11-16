@@ -10,6 +10,7 @@ const customerSchema = new mongoose.Schema({
     type: String,
     minlenght: 3,
     maxlenght: 1024,
+    default: "",
   },
 });
 

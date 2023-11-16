@@ -19,30 +19,45 @@ router.post("/", async (req, res) => {
     user = new User({ ...req.body, password: hashPassword });
     await user.save();
 
+    let response;
     if (user.isCustomer()) {
       const customer = await new Customer({
         user: user._id,
+        address: req.body.address,
       });
 
       customer.save();
+
+      response = {
+        name: user.fullName(),
+        phone: user.phone,
+        email: user.email,
+        address: customer.address,
+      };
     } else if (user.isStore()) {
       const store = await new Store({
         user: user._id,
+        store_name: req.body.store_name,
         category: req.body.category,
       });
 
       store.save();
+
+      response = {
+        name: user.fullName(),
+        store_name: store.store_name,
+        phone: user.phone,
+        email: user.email,
+        category: store.category,
+      };
     }
 
     const token = user.generateAuthToken();
 
-    res
-      .status(200)
-      .header("x-auth-token", token)
-      .send({
-        message: "User created successfully.",
-        user: { id: user._id, name: user.fullName() },
-      });
+    res.status(200).header("x-auth-token", token).send({
+      message: "User created successfully.",
+      user: response,
+    });
   } catch (error) {
     res.status(400).send(error);
   }

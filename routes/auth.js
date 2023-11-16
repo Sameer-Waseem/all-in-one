@@ -2,6 +2,8 @@ const express = require("express");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const { User, validateAuth } = require("../models/user");
+const { Customer } = require("../models/customer");
+const { Store } = require("../models/store");
 
 router.post("/", async (req, res) => {
   try {
@@ -19,7 +21,33 @@ router.post("/", async (req, res) => {
 
     const token = user.generateAuthToken();
 
-    res.status(200).send({ message: "Logged in successfully.", token });
+    let response;
+    if (user.isCustomer()) {
+      const customer = await Customer.findOne({ user: user._id });
+
+      response = {
+        name: user.fullName(),
+        phone: user.phone,
+        email: user.email,
+        address: customer.address,
+        token,
+      };
+    } else if (user.isStore()) {
+      const store = await Store.findOne({ user: user._id });
+
+      response = {
+        name: user.fullName(),
+        store_name: store.store_name,
+        phone: user.phone,
+        email: user.email,
+        category: store.category,
+        token,
+      };
+    }
+
+    res
+      .status(200)
+      .send({ message: "Logged in successfully.", user: response });
   } catch (error) {
     res.status(400).send(error);
   }

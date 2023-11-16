@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema({
   user_role: {
     type: String,
     default: "Customer",
-    enum: ["Admin", "Customer", "Store"],
+    enum: ["Customer", "Store"],
   },
 });
 
@@ -45,10 +45,6 @@ userSchema.methods.generateAuthToken = function () {
     { _id: this._id, role: this.user_role },
     config.get("jwtPrivateKey")
   );
-};
-
-userSchema.methods.isAdmin = function () {
-  return this.user_role === "Admin";
 };
 
 userSchema.methods.isCustomer = function () {
@@ -69,10 +65,15 @@ function validateRegister(user) {
   const schema = Joi.object({
     first_name: Joi.string().min(3).max(50).required(),
     last_name: Joi.string().min(3).max(50).required(),
+    user_role: Joi.string().valid("Customer", "Store"),
+    store_name: Joi.string().min(3).max(50).when("user_role", {
+      is: "Store",
+      then: Joi.required(),
+    }),
     phone: Joi.number().min(3).required(),
     email: Joi.string().email().min(3).max(255).required(),
     password: Joi.string().min(5).max(1024).required(),
-    user_role: Joi.string().valid("Admin", "Customer", "Store"),
+    address: Joi.string().min(3).max(50),
     category: Joi.string().min(3).max(50).when("user_role", {
       is: "Store",
       then: Joi.required(),
