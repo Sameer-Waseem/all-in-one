@@ -1,7 +1,7 @@
 {
   "name": "all-in-one",
   "version": "1.0.0",
-  "description": "All in one is an ecommerce website. Its just like a store. Where everyone can list their products to sell.",
+  "description": "All in one is an ecomerce website. Where everyone can create store list their products and customer can view their products",
   "dbDiagram": "https://dbdiagram.io/d/Users-654b08cb7d8bbd6465b8c308",
   "main": "index.js",
   "scripts": {

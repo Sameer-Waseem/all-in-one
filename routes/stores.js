@@ -6,17 +6,11 @@ const router = express.Router();
 
 router.get("/", async (req, res) => {
   try {
-    const stores = await Store.find()
-      .populate("user", "-_id first_name last_name")
-      .select("user category");
+    const stores = await Store.find().select("category store_name");
 
     res.status(200).send({
       message: "All stores.",
-      stores: stores.map((store) => ({
-        id: store._id,
-        name: store.user.fullName(),
-        category: store.category,
-      })),
+      stores,
     });
   } catch (error) {
     res.status(400).send(error);
@@ -28,7 +22,10 @@ router.get("/:id", async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(req.params.id))
       return res.status(400).send("Invalid ID.");
 
-    const store = await Store.findById(req.params.id).populate("user");
+    const store = await Store.findById(req.params.id)
+      .select("user category store_name")
+      .populate("user", "-_id phone email");
+
     if (!store) return res.status(404).send("Store does not exist.");
 
     const products = await Product.find({ store: store._id }).select(
@@ -36,7 +33,11 @@ router.get("/:id", async (req, res) => {
     );
 
     res.status(200).send({
-      store: { id: store._id, name: store.user.fullName() },
+      _id: store._id,
+      store_name: store.store_name,
+      category: store.category,
+      phone: store.user.phone,
+      email: store.user.email,
       products,
     });
   } catch (error) {

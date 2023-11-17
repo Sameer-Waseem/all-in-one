@@ -16,7 +16,14 @@ router.post("/", [authorization, isStore], async (req, res) => {
     const product = await new Product({ store: store._id, ...req.body });
     product.save();
 
-    res.status(200).send(product);
+    res.status(200).send({
+      messae: "Product created successfully.",
+      product: {
+        _id: product._id,
+        name: product.name,
+        image: product.image,
+      },
+    });
   } catch (error) {
     res.status(400).send(error);
   }
